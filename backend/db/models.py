@@ -97,3 +97,12 @@ class AuditLog(db.Entity):
     action = Required(str)
     target = Optional(str)
     timestamp = Required(datetime, default=datetime.utcnow)
+
+class Group(db.Entity):
+    id = PrimaryKey(int, auto=True)
+    name = Required(str)
+    description = Optional(str)
+    owner = Required(User)  # связь с пользователем, владелец группы
+    created_at = Required(datetime, default=datetime.utcnow)
+    updated_at = Required(datetime, default=datetime.utcnow)
+
