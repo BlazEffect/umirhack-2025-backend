@@ -1,10 +1,10 @@
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, HTTPException, Depends
 from pony.orm import db_session, commit
 from .models import User
 from .schemas import UserCreate, UserPublic, Token
 from .security import hash_password, verify_password, create_access_token
 from .deps import get_current_user
-from backend.app.config import settings
+from app.config import settings
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 

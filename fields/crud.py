@@ -1,5 +1,5 @@
-from pony.orm import db_session, select
-from backend.db.models import Field, User
+from pony.orm import db_session
+from db.models import Field, User
 from datetime import datetime
 import json
 

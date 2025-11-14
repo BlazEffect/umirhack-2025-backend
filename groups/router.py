@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
-from backend.groups import crud
-from backend.groups.schemas import GroupCreate, GroupUpdate, GroupOut
-from backend.auth.deps import get_current_user  # функция, которая достаёт пользователя из токена
+from groups import crud
+from groups.schemas import GroupCreate, GroupUpdate, GroupOut
+from auth.deps import get_current_user  # функция, которая достаёт пользователя из токена
 
 router = APIRouter(prefix="/groups", tags=["Groups"])
 

@@ -1,15 +1,14 @@
+from auth.deps import get_current_user
 from fastapi import APIRouter, HTTPException, Depends
-from backend.Seasons import crud
-from datetime import datetime
-from backend.Seasons.schemas import SeasonCreate, SeasonUpdate, SeasonOut
-from backend.app.auth.deps import get_current_user  # импорт функции, которая извлекает юзера из токена
-import json
+
+from seasons import crud
+from seasons.schemas import SeasonCreate, SeasonUpdate, SeasonOut
 
 router = APIRouter(prefix="/seasons", tags=["Seasons"])
 
-@router.post("/", response_model=SeasonOut)
+
+@router.post("", response_model=SeasonOut)
 def create_season(season: SeasonCreate, current_user=Depends(get_current_user)):
-    """Создание нового сезона пользователем"""
     try:
         new_season = crud.create_season(
             user_id=current_user.id,
@@ -26,7 +25,8 @@ def create_season(season: SeasonCreate, current_user=Depends(get_current_user)):
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-@router.get("/", response_model=list[SeasonOut])
+
+@router.get("", response_model=list[SeasonOut])
 def get_seasons():
     Seasons = crud.get_all_seasons()
     return [
@@ -38,6 +38,7 @@ def get_seasons():
         } for f in Seasons
     ]
 
+
 @router.get("/{season_id}", response_model=SeasonOut)
 def get_season(season_id: int):
     f = crud.get_season(season_id)
@@ -45,12 +46,14 @@ def get_season(season_id: int):
         raise HTTPException(status_code=404, detail="Сезон не найден")
     return f
 
+
 @router.put("/{season_id}", response_model=SeasonOut)
 def update_season(season_id: int, season_update: SeasonUpdate):
     updated = crud.update_season(season_id, season_update.model_dump(exclude_unset=True))
     if not updated:
         raise HTTPException(status_code=404, detail="Сезон не найден")
     return updated
+
 
 @router.delete("/{season_id}")
 def delete_season(season_id: int):

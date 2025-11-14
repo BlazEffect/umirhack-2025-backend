@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordBearer
 from pony.orm import db_session
 from .models import User
 from .security import decode_token
-from backend.app.config import settings
+from app.config import settings
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 

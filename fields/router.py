@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
-from backend.fields import crud
-from backend.fields.schemas import FieldCreate, FieldUpdate, FieldOut
-from backend.auth.deps import get_current_user  # импорт функции, которая извлекает юзера из токена
+from fields import crud
+from fields.schemas import FieldCreate, FieldUpdate, FieldOut
+from auth.deps import get_current_user  # импорт функции, которая извлекает юзера из токена
 import json
 
 router = APIRouter(prefix="/fields", tags=["Fields"])

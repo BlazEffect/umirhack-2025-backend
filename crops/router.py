@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
-from backend.crops import crud
-from backend.crops.schemas import CropRotationCreate, CropRotationUpdate, CropRotationOut
+from crops import crud
+from crops.schemas import CropRotationCreate, CropRotationUpdate, CropRotationOut
 
 router = APIRouter(prefix="/crops", tags=["Crops"])
 
