@@ -8,6 +8,7 @@ from db.seeder import create_detailed_seed_data
 from fields.router import router as fields_router
 from groups.router import router as groups_router
 from seasons.router import router as seasons_router
+from recommendations.router import router as recommendations_router
 
 @asynccontextmanager
 async def init_db(app: FastAPI):
@@ -22,3 +23,4 @@ app.include_router(fields_router)
 app.include_router(crops_router)
 app.include_router(groups_router)
 app.include_router(seasons_router)
+app.include_router(recommendations_router)
