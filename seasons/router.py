@@ -27,8 +27,8 @@ def create_season(season: SeasonCreate, current_user=Depends(get_current_user)):
 
 
 @router.get("", response_model=list[SeasonOut])
-def get_seasons():
-    Seasons = crud.get_all_seasons()
+def get_seasons(current_user=Depends(get_current_user)):
+    Seasons = crud.get_all_seasons(current_user.id)
     return [
         {
             "id": f["id"],
@@ -40,24 +40,24 @@ def get_seasons():
 
 
 @router.get("/{season_id}", response_model=SeasonOut)
-def get_season(season_id: int):
-    f = crud.get_season(season_id)
+def get_season(season_id: int, current_user=Depends(get_current_user)):
+    f = crud.get_season(season_id, current_user.id)
     if not f:
         raise HTTPException(status_code=404, detail="Сезон не найден")
     return f
 
 
 @router.put("/{season_id}", response_model=SeasonOut)
-def update_season(season_id: int, season_update: SeasonUpdate):
-    updated = crud.update_season(season_id, season_update.model_dump(exclude_unset=True))
+def update_season(season_id: int, season_update: SeasonUpdate, current_user=Depends(get_current_user)):
+    updated = crud.update_season(season_id, season_update.model_dump(exclude_unset=True), current_user.id)
     if not updated:
         raise HTTPException(status_code=404, detail="Сезон не найден")
     return updated
 
 
 @router.delete("/{season_id}")
-def delete_season(season_id: int):
-    ok = crud.delete_season(season_id)
+def delete_season(season_id: int, current_user=Depends(get_current_user)):
+    ok = crud.delete_season(season_id, current_user.id)
     if not ok:
         raise HTTPException(status_code=404, detail="Сезон не найден")
     return {"message": "Сезон успешно удален"}

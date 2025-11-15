@@ -7,13 +7,13 @@ from db.models import Season, User
 
 
 @db_session
-def create_season(user_id: int, owner: User, name: str, date_start: datetime, date_end: datetime):
+def create_season(user_id: int, name: str, date_start: datetime, date_end: datetime):
     user = User.get(id=user_id)
     if not user:
         raise ValueError("Пользователь не найден")
 
     season = Season(
-        owner=owner,
+        owner=user,
         name=name,
         date_start=date_start,
         date_end=date_end,
@@ -24,13 +24,14 @@ def create_season(user_id: int, owner: User, name: str, date_start: datetime, da
 
 
 @db_session
-def get_all_seasons():
-    return [f.to_dict() for f in Season.select()]
+def get_all_seasons(owner_id: int):
+    seasons = Season.select(lambda f: f.owner.id == owner_id)
+    return [season.to_dict() for season in seasons]
 
 
 @db_session
-def get_season(season_id: int):
-    season = Season.get(id=season_id)
+def get_season(season_id: int, owner_id: int):
+    season = Season.get(id=season_id, owner=owner_id)
     if not season:
         return None
     data = season.to_dict()
@@ -38,8 +39,8 @@ def get_season(season_id: int):
 
 
 @db_session
-def update_season(season_id: int, data: dict) -> Optional[dict]:
-    season = Season.get(id=season_id)
+def update_season(season_id: int, data: dict, owner_id: int) -> Optional[dict]:
+    season = Season.get(id=season_id, owner=owner_id)
     if not season:
         return None
 
@@ -67,8 +68,8 @@ def update_season(season_id: int, data: dict) -> Optional[dict]:
 
 
 @db_session
-def delete_season(season_id: int):
-    season = Season.get(id=season_id)
+def delete_season(season_id: int, owner_id: int):
+    season = Season.get(id=season_id, owner=owner_id)
     if not season:
         return False
     season.delete()
