@@ -1,50 +1,62 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
+
 from crops import crud
-from crops.schemas import CropRotationCreate, CropRotationUpdate, CropRotationOut
+from crops.schemas import PlantingCreate, PlantingUpdate, PlantingOut
 
-router = APIRouter(prefix="/crops", tags=["Crops"])
+router = APIRouter(prefix="/fields/{field_id}/plantings", tags=["Plantings"])
 
-@router.post("/", response_model=CropRotationOut)
-def create_crop_rotation(crop: CropRotationCreate):
+
+@router.post("", response_model=PlantingOut)
+def create_planting(
+        field_id: int,
+        planting: PlantingCreate,
+):
     try:
-        new_crop = crud.create_crop_rotation(
-            field_id=crop.field_id,
-            crop_id=crop.crop_id,
-            year=crop.year,
-            season=crop.season,
-            predecessor_crop_id=crop.predecessor_crop_id,
-            notes=crop.notes,
-            avg_yield=crop.avg_yield,
+        new_planting = crud.create_planting_with_dates(
+            field_id=field_id,
+            crop_id=planting.crop_id,
+            season_id=planting.season_id,
+            planting_date=planting.planting_date,
+            harvest_date=planting.harvest_date,
+            yield_amount=planting.yield_amount,
+            yield_quality=planting.yield_quality,
+            notes=planting.notes,
         )
-        return new_crop
+        return new_planting
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-@router.get("/", response_model=list[CropRotationOut])
-def get_all():
-    return crud.get_all_rotations()
 
-@router.get("/{rotation_id}", response_model=CropRotationOut)
-def get_one(rotation_id: int):
-    rotation = crud.get_rotation(rotation_id)
-    if not rotation:
-        raise HTTPException(status_code=404, detail="Запись не найдена")
-    return rotation
+@router.get("", response_model=list[PlantingOut])
+def get_all_plantings(field_id: int):
+    return crud.get_plantings_by_field(field_id)
 
-@router.get("/field/{field_id}", response_model=list[CropRotationOut])
-def get_by_field(field_id: int):
-    return crud.get_rotations_by_field(field_id)
 
-@router.put("/{rotation_id}", response_model=CropRotationOut)
-def update(rotation_id: int, data: CropRotationUpdate):
-    updated = crud.update_rotation(rotation_id, data.model_dump(exclude_unset=True))
-    if not updated:
-        raise HTTPException(status_code=404, detail="Запись не найдена")
+@router.get("/{planting_id}", response_model=PlantingOut)
+def get_planting(field_id: int, planting_id: int):
+    planting = crud.get_planting(planting_id)
+    if not planting or planting.get('field_id') != field_id:
+        raise HTTPException(status_code=404, detail="Посадка не найдена")
+    return planting
+
+
+@router.put("/{planting_id}", response_model=PlantingOut)
+def update_planting(field_id: int, planting_id: int, data: PlantingUpdate):
+    # Проверяем существование и принадлежность записи
+    existing = crud.get_planting(planting_id)
+    if not existing or existing.get('field_id') != field_id:
+        raise HTTPException(status_code=404, detail="Посадка не найдена")
+
+    updated = crud.update_planting(planting_id, data.model_dump(exclude_unset=True))
     return updated
 
-@router.delete("/{rotation_id}")
-def delete(rotation_id: int):
-    ok = crud.delete_rotation(rotation_id)
-    if not ok:
-        raise HTTPException(status_code=404, detail="Запись не найдена")
-    return {"message": "Культура удалена"}
+
+@router.delete("/{planting_id}")
+def delete_planting(field_id: int, planting_id: int):
+    # Проверяем существование и принадлежность записи
+    existing = crud.get_planting(planting_id)
+    if not existing or existing.get('field_id') != field_id:
+        raise HTTPException(status_code=404, detail="Посадка не найдена")
+
+    ok = crud.delete_planting(planting_id)
+    return {"message": "Посадка удалена"}

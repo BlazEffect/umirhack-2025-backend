@@ -1,31 +1,33 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional
 
-class CropRotationBase(BaseModel):
-    field_id: int
+class PlantingCreate(BaseModel):
     crop_id: int
-    year: int = Field(..., ge=1900, le=2100)
-    season: str
-    predecessor_crop_id: Optional[int] = None
+    season_id: int
+    planting_date: datetime
+    harvest_date: Optional[datetime] = None
+    yield_amount: Optional[float] = None
+    yield_quality: Optional[str] = None
     notes: Optional[str] = None
-    avg_yield: Optional[float] = Field(None, ge=0)
 
-class CropRotationCreate(CropRotationBase):
-    pass
-
-class CropRotationUpdate(BaseModel):
+class PlantingUpdate(BaseModel):
     crop_id: Optional[int] = None
-    year: Optional[int] = None
-    season: Optional[str] = None
-    predecessor_crop_id: Optional[int] = None
+    season_id: Optional[int] = None
+    planting_date: Optional[datetime] = None
+    harvest_date: Optional[datetime] = None
+    yield_amount: Optional[float] = None
+    yield_quality: Optional[str] = None
     notes: Optional[str] = None
-    avg_yield: Optional[float] = Field(None, ge=0)
 
-class CropRotationOut(CropRotationBase):
-    id: int
-    created_at: datetime
-    updated_at: datetime
+class PlantingOut(BaseModel):
+    crop_id: int
+    season_id: int
+    planting_date: Optional[str] = None
+    harvest_date: Optional[str] = None
+    yield_amount: Optional[float] = None
+    yield_quality: Optional[str] = None
+    notes: Optional[str] = None
 
     class Config:
         from_attributes = True

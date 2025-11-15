@@ -9,6 +9,7 @@ from fields.router import router as fields_router
 from groups.router import router as groups_router
 from seasons.router import router as seasons_router
 from recommendations.router import router as recommendations_router
+from calculator.router import router as calculator_router
 
 @asynccontextmanager
 async def init_db(app: FastAPI):
@@ -18,9 +19,13 @@ async def init_db(app: FastAPI):
 
     yield
 app = FastAPI(title="Agro App", lifespan=init_db)
-app.include_router(auth_router)
-app.include_router(fields_router)
-app.include_router(crops_router)
-app.include_router(groups_router)
-app.include_router(seasons_router)
-app.include_router(recommendations_router)
+
+url_prefix = "/api"
+
+app.include_router(auth_router, prefix=url_prefix)
+app.include_router(fields_router, prefix=url_prefix)
+app.include_router(crops_router, prefix=url_prefix)
+app.include_router(groups_router, prefix=url_prefix)
+app.include_router(seasons_router, prefix=url_prefix)
+app.include_router(recommendations_router, prefix=url_prefix)
+app.include_router(calculator_router, prefix=url_prefix)

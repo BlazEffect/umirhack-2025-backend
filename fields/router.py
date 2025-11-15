@@ -29,6 +29,11 @@ def get_fields(current_user=Depends(get_current_user)):
     fields = crud.get_all_fields(owner_id=current_user.id)
     return fields
 
+@router.get("/with/plantings")
+def get_fields_with_plantings(current_user=Depends(get_current_user)):
+    fields = crud.get_all_fields_with_plantings(owner_id=current_user.id)
+    return fields
+
 
 @router.get("/{field_id}", response_model=FieldOut)
 def get_field(field_id: int, current_user=Depends(get_current_user)):

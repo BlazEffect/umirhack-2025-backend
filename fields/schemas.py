@@ -28,7 +28,6 @@ class FieldCreate(BaseModel):
 class FieldUpdate(BaseModel):
     name: Optional[str] = None
     area_ha: Optional[float] = Field(None, gt=0)
-    coordinates: Optional[List[List[float]]] = None
     soil_type: Optional[str] = None
 
 
